@@ -1,9 +1,9 @@
 document.getElementById('bmiForm').addEventListener('submit', function(event) {
     event.preventDefault();
     
-    const weight = parseFloat(document.getElementById('weight').value);
-    const height = parseFloat(document.getElementById('height').value);
-    const bmi = (weight / (height * height)).toFixed(2);
+    let weight = parseFloat(document.getElementById('weight').value);
+    let height = parseFloat(document.getElementById('height').value);
+    const bmi = (703 * weight / (height * height)).toFixed(2);
 
     let category;
     if (bmi < 18.5) {
