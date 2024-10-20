@@ -1,12 +1,10 @@
 document.getElementById('bmiForm').addEventListener('submit', function(event) {
     event.preventDefault();
     
-    // Get weight, height, and calculate BMI
     let weight = parseFloat(document.getElementById('weight').value);
     let height = parseFloat(document.getElementById('height').value);
     const bmi = (703 * weight / (height * height)).toFixed(2);
 
-    // Determine BMI category
     let category;
     if (bmi < 18.5) {
         category = "Underweight";
@@ -18,13 +16,10 @@ document.getElementById('bmiForm').addEventListener('submit', function(event) {
         category = "Obese";
     }
 
-    // Get the selected intensity level
     let intensity = document.getElementById('intensity').value;
 
-    // Get the selected equipment
     let equipment = document.getElementById('equipment').value;
 
-    // Now send the BMI category, intensity, and equipment to the backend (or use locally)
     console.log(`Your BMI is ${bmi}`); 
     console.log(`Your category is: ${category}`);
     console.log(`Selected intensity: ${intensity}`);
