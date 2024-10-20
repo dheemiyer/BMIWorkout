@@ -7,22 +7,41 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <h1>BMI Calculator</h1>
+    <form id="bmiForm">
+        <input type="number" id="weight" placeholder="Weight (lbs)" step="0.01" required>
+        <input type="number" id="height" placeholder="Height (in)" step="0.01" required>
+
+        <!-- Intensity selection -->
+        <label for="intensity">Select Intensity Level:</label>
+        <select id="intensity" required>
+            <option value="">Choose...</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+        </select>
+
+        <!-- Equipment selection (now single choice) -->
+        <label for="equipment">Select Equipment:</label>
+        <select id="equipment" required>
+            <option value="">Choose...</option>
+            <option value="Body Only">Body Only</option>
+            <option value="Dumbbells">Dumbbells</option>
+            <option value="Full Equipment">Full Equipment</option>
+        </select>
+
+        <button type="submit">Calculate BMI</button>
+    </form>
+
     <p>
-        Designed By<br/> 
+        designed by<br/> 
         Dheem
-        <a href="https://www.linkedin.com/in/dheemanth-iyer/"> <img src="linkedin.png" alt="Dheem's linkedin" width="20" height="20" /></a><br/>
+        <a href="https://www.linkedin.com/in/dheemanth-iyer/"><img src="linkedin.png" alt="Dheem's linkedin" width="20" height="20" /></a><br/>
         Praketh
         <a href="https://www.linkedin.com/in/praketh-potlapalli-44b058327/"><img src="linkedin.png" alt="Praketh's linkedin" width="20" height="20" /></a><br/>
         Owen
         <a href="https://www.linkedin.com/in/ziyi-wang-78b98a326/"><img src="linkedin.png" alt="Owen's linkedin" width="20" height="20" /></a><br/>
     </p>
-    <h1>BMI Calculator</h1>
-    <form id="bmiForm">
-        <input type="number" id="weight" placeholder="Weight (lbs)" step="0.01" required>
-        <input type="number" id="height" placeholder="Height (in)" step="0.01" required>
-        <button type="submit">Calculate BMI</button>
-    </form>
-    
+
     <div id="result"></div>
     <script src="script.js"></script>
 </body>
