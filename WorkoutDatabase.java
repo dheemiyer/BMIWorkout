@@ -8,19 +8,22 @@ public class WorkoutDatabase {
     }
 
     public String getWorkoutPlan(String bmiCategory) {
-        String plan = "";
-        String query = "SELECT workout FROM workouts WHERE category = ?";
+    StringBuilder plan = new StringBuilder();
+    String query = "SELECT name, type, intensity, duration, calories_burned FROM workouts WHERE category = ?";
 
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, bmiCategory);
-            ResultSet rs = stmt.executeQuery();
+    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        stmt.setString(1, bmiCategory);
+        ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()) {
-                plan += rs.getString("workout") + "\n";
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        while (rs.next()) {
+            String workoutName = rs.getString("name");
+            String workoutType = rs.getString("type");
+            int duration = rs.getInt("duration");
+            int calories = rs.getInt("calories_burned");
+            plan.append(String.format("%s: %s for %d minutes (Burns %d calories)\n", workoutName, workoutType, duration, calories));
         }
-        return plan;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return plan.toString();
 }
