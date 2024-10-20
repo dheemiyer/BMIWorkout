@@ -9,13 +9,13 @@ document.getElementById('bmiForm').addEventListener('submit', function(event) {
     // Determine BMI category
     let category;
     if (bmi < 18.5) {
-        category = "underweight";
+        category = "Underweight";
     } else if (bmi < 24.9) {
-        category = "normal weight";
+        category = "Normal weight";
     } else if (bmi < 29.9) {
-        category = "overweight";
+        category = "Overweight";
     } else {
-        category = "obese";
+        category = "Obese";
     }
 
     // Get the selected intensity level
@@ -25,12 +25,29 @@ document.getElementById('bmiForm').addEventListener('submit', function(event) {
     let equipment = document.getElementById('equipment').value;
 
     // Now send the BMI category, intensity, and equipment to the backend (or use locally)
-    console.log(`Your BMI is ${bmi}, category: ${category}`);
+    console.log(`Your BMI is ${bmi}`); 
+    console.log(`Your category is: ${category}`);
     console.log(`Selected intensity: ${intensity}`);
     console.log(`Selected equipment: ${equipment}`);
 
-    // Display the result
-    document.getElementById('result').innerHTML = `Your BMI is ${bmi}, category: ${category}<br>
+    generalRecommendation = "Consider hitting a push pull legs routine or a arnold split (chest and back, shoulders and arms, and legs). Good luck in your fitness journey!";
+
+    if (category === "Underweight") {
+        exerciseRecommendation = "Focus on strength training and calorie-dense exercises to build muscle mass.";
+    } else if (category === "Normal weight") {
+        exerciseRecommendation = "Maintain a balanced workout routine including cardio and strength training.";
+    } else if (category === "Overweight") {
+        exerciseRecommendation = "Incorporate more cardio exercises and consider weight management strategies.";
+    } else if (category === "Obese") {
+        exerciseRecommendation = "Focus on low-impact cardio exercises and strength training to support weight loss.";
+    }
+
+    document.getElementById('result').innerHTML = `Your BMI is ${bmi} <br>
+                                                   Category: ${category}<br>
                                                    Intensity: ${intensity}<br>
-                                                   Equipment: ${equipment}`;
+                                                   Equipment: ${equipment}<br>
+                                                   Exercise Recommendation: ${exerciseRecommendation}<br>
+                                                   General Recommendation: ${generalRecommendation}`;
+
+
 });
