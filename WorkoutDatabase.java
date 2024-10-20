@@ -1,50 +1,68 @@
-import java.sql.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class WorkoutDatabase {
-    private Connection connection;
 
-    public WorkoutDatabase(String dbUrl, String user, String password) throws SQLException {
-        connection = DriverManager.getConnection(dbUrl, user, password);
+    private HashMap<String, HashMap<String, HashMap<String, String>>> workoutData;
+
+    public WorkoutDatabase(String csvFilePath) {
+        workoutData = new HashMap<>();
+        loadWorkoutData(csvFilePath);
     }
 
-    public String getWorkoutPlan(String bmiCategory) {
-        StringBuilder plan = new StringBuilder();
-        HashMap<String, List<String>> bodyPartFocus = new HashMap<>();
+    // Load data from CSV file
+    private void loadWorkoutData(String csvFilePath) {
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                String muscleGroup = values[0];
+                String intensity = values[1]; // Beginner or Intermediate
+                String equipment = values[2]; // Body Only, Dumbbells, Full Equipment
+                String exercise = values[3]; // Exercise name
 
-        // Workout focus areas based on BMI category
-        if (bmiCategory.equals("underweight")) {
-            bodyPartFocus.put("Chest", new ArrayList<>());
-            bodyPartFocus.put("Shoulders", new ArrayList<>());
-            bodyPartFocus.put("Triceps", new ArrayList<>());
-        } else if (bmiCategory.equals("overweight") || bmiCategory.equals("obese")) {
-            bodyPartFocus.put("Abdominals", new ArrayList<>());
-            bodyPartFocus.put("Lats", new ArrayList<>());
-        } else { // Normal weight
-            String[] bodyParts = {"Abdominals", "Quadriceps", "Middle Back", "Lower Back", "Lats", 
-                                  "Hamstrings", "Glutes", "Forearms", "Chest", "Calves", 
-                                  "Biceps", "Abductors", "Shoulders", "Triceps"};
-            for (String part : bodyParts) {
-                bodyPartFocus.put(part, new ArrayList<>());
+                // Populate the workoutData HashMap
+                workoutData
+                        .computeIfAbsent(muscleGroup, k -> new HashMap<>())
+                        .computeIfAbsent(intensity, k -> new HashMap<>())
+                        .put(equipment, exercise);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Generate workout plan based on BMI category, intensity, and equipment
+    public String getWorkoutPlan(String bmiCategory, String intensity, String equipment) {
+        StringBuilder plan = new StringBuilder();
+        
+        // Focus muscle groups based on BMI category
+        String[] muscleGroups;
+        if (bmiCategory.equals("underweight")) {
+            muscleGroups = new String[]{"Chest", "Shoulders", "Triceps"};
+        } else if (bmiCategory.equals("overweight") || bmiCategory.equals("obese")) {
+            muscleGroups = new String[]{"Abdominals", "Lats"};
+        } else { // Normal weight
+            muscleGroups = new String[]{"Abdominals", "Quadriceps", "Middle Back", "Lower Back", "Lats", 
+                                        "Hamstrings", "Glutes", "Forearms", "Chest", "Calves", 
+                                        "Biceps", "Abductors", "Shoulders", "Triceps"};
         }
 
-        // Query for workouts by body part
-        for (String bodyPart : bodyPartFocus.keySet()) {
-            String query = "SELECT Title, Type, Duration FROM workouts WHERE BodyPart = ? LIMIT 1";
-            try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setString(1, bodyPart);
-                ResultSet rs = stmt.executeQuery();
-                while (rs.next()) {
-                    String workoutName = rs.getString("Title");
-                    String workoutType = rs.getString("Type");
-                    int duration = rs.getInt("Duration");
-                    plan.append(String.format("%s: %s for %d minutes\n", workoutName, workoutType, duration));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+        // Loop through the muscle groups and add exercises based on intensity and equipment
+        for (String muscleGroup : muscleGroups) {
+            if (workoutData.containsKey(muscleGroup) && 
+                workoutData.get(muscleGroup).containsKey(intensity) && 
+                workoutData.get(muscleGroup).get(intensity).containsKey(equipment)) {
+
+                String exercise = workoutData.get(muscleGroup).get(intensity).get(equipment);
+                plan.append(muscleGroup).append(": ").append(exercise).append("\n");
+            } else {
+                plan.append(muscleGroup).append(": No exercise available for the selected options\n");
             }
         }
 
